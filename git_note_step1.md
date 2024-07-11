@@ -50,11 +50,11 @@ git commit -m "edit git note"
 git push
 Everything up-to-date
 ###########....
-- PS C:\myworking\test\select2\component_select> ** git add . **
-- PS C:\myworking\test\select2\component_select> ** git commit -m "edit note" **
+- PS C:\myworking\test\select2\component_select> **git add .**
+- PS C:\myworking\test\select2\component_select> **git commit -m "edit note"**
 - [step1 914414d] edit note
 -  1 file changed, 3 insertions(+)
-- PS C:\myworking\test\select2\component_select> "" git push ""
+- PS C:\myworking\test\select2\component_select> **git push**
 - Enumerating objects: 5, done.
 - Counting objects: 100% (5/5), done.
 - Delta compression using up to 4 threads
