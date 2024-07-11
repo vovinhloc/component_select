@@ -80,3 +80,5 @@ Everything up-to-date
 - To https://github.com/vovinhloc/component_select
 - * [new branch]      step3 -> step3
 - PS C:\myworking\test\select2\component_select> 
+#### can co cau lenh upsteam nay
+git push --set-upstream origin step3
