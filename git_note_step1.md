@@ -6,6 +6,8 @@ git checkout "step1"
 git add.
 ### 4./commit commend
 git commit -m "tạo branch step1"
+#### 4.1 cài đặt remote upstream là step 2
+git push --set-upstream origin step1
 ### 5./ push origin lên step1
 git push origin "step1"
 
@@ -64,3 +66,17 @@ Everything up-to-date
 - remote: Resolving deltas: 100% (1/1), completed with 1 local object.
 - To https://github.com/vovinhloc/component_select
 -    2ee59c7..914414d  step1 -> step1
+
+############ them step3
+- PS C:\myworking\test\select2\component_select> **git branch step3**
+- PS C:\myworking\test\select2\component_select> **git checkout step3**
+- Switched to branch 'step3'
+- PS C:\myworking\test\select2\component_select> **git push origin step3**
+- Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+- remote: 
+- remote: Create a pull request for 'step3' on GitHub by visiting:
+- remote:      https://github.com/vovinhloc/component_select/pull/new/step3
+- remote:
+- To https://github.com/vovinhloc/component_select
+- * [new branch]      step3 -> step3
+- PS C:\myworking\test\select2\component_select> 
