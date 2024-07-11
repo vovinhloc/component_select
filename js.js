@@ -11,8 +11,7 @@ class CustomSelect extends HTMLElement {
 
 .custom-select-container {
 position: relative;
-width: 300px;
-margin: 50px auto;
+
 }
 
 #searchInput {
