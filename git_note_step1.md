@@ -1,7 +1,8 @@
 ### 1./ Tạo branch step1
 git branch "step1"
 ### 2./ Chuyển sang step1
-git checkout "step1"
+- git checkout "step1"
+- git push --set-upstream origin step1
 ### 3./ Thêm file
 git add.
 ### 4./commit commend
