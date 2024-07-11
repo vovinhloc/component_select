@@ -44,6 +44,9 @@ Everything up-to-date
 
 ## Final
 git add .
+git commit -m "edit git note" 
+
+
 git push
 Everything up-to-date
 
