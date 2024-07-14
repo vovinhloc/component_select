@@ -4,8 +4,8 @@ class CustomSelect extends HTMLElement {
 
         // Tạo Shadow DOM
         this.attachShadow({ mode: 'open' });
-        this._value = ''; // Thêm biến để lưu giá trị đã chọn
-
+        this._value = []; // Thêm biến để lưu giá trị đã chọn
+        this.selectedItemsContainer = null; // Thêm container cho các item đã chọn
         // Nội dung HTML của component
         this.shadowRoot.innerHTML = `
     <style>
@@ -66,10 +66,11 @@ background-color: #f0f0f0;
     }
 
     connectedCallback() {
-        console.log(
-            "connectedCallback"
-        )
+
         this.fetchOptions();
+        this.selectedItemsContainer = document.createElement('div');
+        this.selectedItemsContainer.classList.add('selected-items-container');
+        this.shadowRoot.querySelector('.custom-select-container').appendChild(this.selectedItemsContainer);
     }
 
     async fetchOptions(query = "") {
@@ -92,7 +93,13 @@ background-color: #f0f0f0;
     }
 
     updateOptions(options) {
-        this.selectBox.innerHTML = options.map(option => `<div class="select-box-item" data-id="${option.id}">${option.name}</div>`).join('');
+        // this.selectBox.innerHTML = options.map(option => `<div class="select-box-item" data-id="${option.id}">${option.name}</div>`).join('');
+        this.selectBox.innerHTML = options.map(option => `
+            <div class="select-box-item" data-id="${option.id}">
+                <input type="checkbox" id="cb_${option.id}">
+                <label for="cb_${option.id}">${option.name}</label>
+            </div>
+        `).join('');
         this.items = this.shadowRoot.querySelectorAll('.select-box-item');
         this.addEvents();
     }
@@ -118,24 +125,46 @@ background-color: #f0f0f0;
 
 
         this.items.forEach(item => {
-            item.addEventListener('click', () => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            checkbox.addEventListener('change', () => {
                 const id = item.dataset.id;
                 const name = item.textContent;
+                const value = { id, name };
 
-                this.searchInput.value = item.textContent;
-                this.selectBox.style.display = 'none';
-                // this._value = item.textContent;
-                this._value = { id, name }; // Lưu cả id và name
-                // this.dispatchEvent(new Event('change')); 
-                // Tạo và dispatch một custom event
-                // event.detail={ value: this._value };
-                const event = new CustomEvent('change', {
+                if (checkbox.checked) {
+                    this._value.push(value);
+                    this.addSelectedItem(value); // Thêm vào container
+                } else {
+                    this._value = this._value.filter(v => v.id !== id);
+                    this.removeSelectedItem(id); // Xóa khỏi container
+                }
+
+                // this.searchInput.value = this._value.map(v => v.name).join(',');
+                // console.log(this.searchInput.value);
+                this.dispatchEvent(new CustomEvent('change', {
                     detail: { value: this._value },
                     bubbles: true,
                     composed: true
-                });
-                this.dispatchEvent(event);
+                }));
             });
+            // item.addEventListener('click', () => {
+            //     const id = item.dataset.id;
+            //     const name = item.textContent;
+
+            //     this.searchInput.value = item.textContent;
+            //     this.selectBox.style.display = 'none';
+            //     // this._value = item.textContent;
+            //     this._value = { id, name }; // Lưu cả id và name
+            //     // this.dispatchEvent(new Event('change')); 
+            //     // Tạo và dispatch một custom event
+            //     // event.detail={ value: this._value };
+            //     const event = new CustomEvent('change', {
+            //         detail: { value: this._value },
+            //         bubbles: true,
+            //         composed: true
+            //     });
+            //     this.dispatchEvent(event);
+            // });
 
             // this.dispatchEvent(event);
         });
@@ -143,6 +172,29 @@ background-color: #f0f0f0;
 
     }
 
+    addSelectedItem(value) {
+        const item = document.createElement('div');
+        item.classList.add('selected-item');
+        item.textContent = value.name;
+        item.dataset.id = value.id;
+        this.selectedItemsContainer.appendChild(item);
+
+        // Thêm sự kiện click để xóa item đã chọn
+        item.addEventListener('click', () => {
+            const checkbox = this.shadowRoot.querySelector(`#cb_${value.id}`);
+            if (checkbox) {
+                checkbox.checked = false;
+                checkbox.dispatchEvent(new Event('change')); // Kích hoạt lại sự kiện change
+            }
+        });
+    }
+
+    removeSelectedItem(id) {
+        const item = this.selectedItemsContainer.querySelector(`[data-id="${id}"]`);
+        if (item) {
+            item.remove();
+        }
+    }
     // Thêm getter để lấy giá trị hiện tại
     get value() {
         return this._value;
@@ -151,7 +203,7 @@ background-color: #f0f0f0;
 // Hàm debounce để tối ưu hóa việc gọi API khi người dùng gõ liên tục
 function debounce(func, wait) {
     let timeout;
-    return function(...args) {
+    return function (...args) {
         const context = this;
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(context, args), wait);
