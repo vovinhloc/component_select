@@ -10,7 +10,8 @@
 
 <body>
     <h1>Hello1git </h1>
-    <custom-select options='["abc", "con gài", "con gà 3", "trái cam 4"]'></custom-select>
+    <!-- <custom-select options='["abc", "con gài", "con gà 3", "trái cam 4"]'></custom-select> -->
+    <custom-select api-url="http://localhost:3000/api/options"></custom-select>
     <script>
         const customSelect = document.querySelector('custom-select');
         customSelect.addEventListener('change', (event) => {

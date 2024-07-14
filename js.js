@@ -66,11 +66,36 @@ background-color: #f0f0f0;
     }
 
     // Lấy danh sách options từ thuộc tính 'options' của element
-    getOptionsHtml() {
-        const options = JSON.parse(this.getAttribute('options') || '[]');
-        return options.map(option => `<div class="select-box-item">${option}</div>`).join('');
+    // getOptionsHtml() {
+    //     const options = JSON.parse(this.getAttribute('options') || '[]');
+    //     return options.map(option => `<div class="select-box-item">${option}</div>`).join('');
+    // }
+
+
+    connectedCallback() {
+        this.fetchOptions();
     }
 
+    async fetchOptions() {
+        try {
+            const apiUrl = this.getAttribute('api-url') || 'http://localhost:3000/api/options'; // Thay đổi nếu cần
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error('Network response was not ok.');
+            }
+            const options = await response.json();
+            this.updateOptions(options);
+        } catch (error) {
+            console.error('Error fetching options:', error);
+            this.selectBox.innerHTML = '<div class="select-box-item">Error loading options</div>';
+        }
+    }
+
+    updateOptions(options) {
+        this.selectBox.innerHTML = options.map(option => `<div class="select-box-item">${option}</div>`).join('');
+        this.items = this.shadowRoot.querySelectorAll('.select-box-item');
+        this.addEvents();
+    }
     // Thêm các sự kiện cho component
     addEvents() {
         this.searchInput.addEventListener('focus', () => this.selectBox.style.display = 'block');
@@ -84,7 +109,7 @@ background-color: #f0f0f0;
             });
         });
 
-        
+
         this.items.forEach(item => {
             item.addEventListener('click', () => {
                 this.searchInput.value = item.textContent;
