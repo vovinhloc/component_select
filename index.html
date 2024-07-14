@@ -1,11 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script defer src="js.js"></script>
 </head>
+
 <body>
     <h1>Hello1git </h1>
+    <custom-select options='["abc", "con gài", "con gà 3", "trái cam 4"]'></custom-select>
+    <script>
+        const customSelect = document.querySelector('custom-select');
+        customSelect.addEventListener('change', (event) => {
+            console.log('change');
+            // console.log('Giá trị đã chọn:', event);
+            console.log('Giá trị đã chọn:', event.detail.value);
+        });
+
+        console.log(customSelect.value);
+    </script>
 </body>
+
 </html>
