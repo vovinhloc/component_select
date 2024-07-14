@@ -51,7 +51,7 @@ background-color: #f0f0f0;
     <div class="custom-select-container">
         <input type="text" id="searchInput" placeholder="Search...">
         <div id="selectBox" class="select-box">
-            ${this.getOptionsHtml()} 
+            
         </div>
     </div>
 `;
@@ -73,6 +73,9 @@ background-color: #f0f0f0;
 
 
     connectedCallback() {
+        console.log(
+            "connectedCallback"
+        )
         this.fetchOptions();
     }
 
