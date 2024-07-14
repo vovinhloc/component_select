@@ -65,13 +65,6 @@ background-color: #f0f0f0;
         this.addEvents();
     }
 
-    // Lấy danh sách options từ thuộc tính 'options' của element
-    // getOptionsHtml() {
-    //     const options = JSON.parse(this.getAttribute('options') || '[]');
-    //     return options.map(option => `<div class="select-box-item">${option}</div>`).join('');
-    // }
-
-
     connectedCallback() {
         console.log(
             "connectedCallback"
@@ -79,10 +72,14 @@ background-color: #f0f0f0;
         this.fetchOptions();
     }
 
-    async fetchOptions() {
+    async fetchOptions(query = "") {
         try {
+            if (!query) {
+                return this.updateOptions([]); // Xóa danh sách nếu không có query
+            }
             const apiUrl = this.getAttribute('api-url') || 'http://localhost:3000/api/options'; // Thay đổi nếu cần
-            const response = await fetch(apiUrl);
+            const response = await fetch(`${apiUrl}?q=${encodeURIComponent(query)}`); // Gửi query lên server
+            // const response = await fetch(apiUrl);
             if (!response.ok) {
                 throw new Error('Network response was not ok.');
             }
@@ -99,18 +96,25 @@ background-color: #f0f0f0;
         this.items = this.shadowRoot.querySelectorAll('.select-box-item');
         this.addEvents();
     }
+    // Thêm phương thức xử lý sự kiện input với debounce
+    handleInput = debounce(() => {
+        const query = this.searchInput.value.trim();
+        this.fetchOptions(query); // Gọi fetchOptions với query
+    }, 300); // Debounce với thời gian 300ms (có thể tùy chỉnh)
+
     // Thêm các sự kiện cho component
     addEvents() {
         this.searchInput.addEventListener('focus', () => this.selectBox.style.display = 'block');
         this.searchInput.addEventListener('blur', () => setTimeout(() => this.selectBox.style.display = 'none', 200));
 
-        this.searchInput.addEventListener('input', () => {
-            const filter = this.searchInput.value.toLowerCase();
-            this.items.forEach(item => {
-                const text = item.textContent.toLowerCase();
-                item.style.display = text.includes(filter) ? '' : 'none';
-            });
-        });
+        this.searchInput.addEventListener('input', this.handleInput); // Sử dụng handleInput với debounce
+        // this.searchInput.addEventListener('input', () => {
+        //     const filter = this.searchInput.value.toLowerCase();
+        //     this.items.forEach(item => {
+        //         const text = item.textContent.toLowerCase();
+        //         item.style.display = text.includes(filter) ? '' : 'none';
+        //     });
+        // });
 
 
         this.items.forEach(item => {
@@ -140,6 +144,14 @@ background-color: #f0f0f0;
         return this._value;
     }
 }
-
+// Hàm debounce để tối ưu hóa việc gọi API khi người dùng gõ liên tục
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
 // Đăng ký custom element
 customElements.define('custom-select', CustomSelect);
