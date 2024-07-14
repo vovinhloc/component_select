@@ -92,7 +92,7 @@ background-color: #f0f0f0;
     }
 
     updateOptions(options) {
-        this.selectBox.innerHTML = options.map(option => `<div class="select-box-item">${option}</div>`).join('');
+        this.selectBox.innerHTML = options.map(option => `<div class="select-box-item" data-id="${option.id}">${option.name}</div>`).join('');
         this.items = this.shadowRoot.querySelectorAll('.select-box-item');
         this.addEvents();
     }
@@ -119,9 +119,13 @@ background-color: #f0f0f0;
 
         this.items.forEach(item => {
             item.addEventListener('click', () => {
+                const id = item.dataset.id;
+                const name = item.textContent;
+
                 this.searchInput.value = item.textContent;
                 this.selectBox.style.display = 'none';
-                this._value = item.textContent;
+                // this._value = item.textContent;
+                this._value = { id, name }; // Lưu cả id và name
                 // this.dispatchEvent(new Event('change')); 
                 // Tạo và dispatch một custom event
                 // event.detail={ value: this._value };
