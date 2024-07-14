@@ -4,6 +4,7 @@ class CustomSelect extends HTMLElement {
 
         // Tạo Shadow DOM
         this.attachShadow({ mode: 'open' });
+        this._value = ''; // Thêm biến để lưu giá trị đã chọn
 
         // Nội dung HTML của component
         this.shadowRoot.innerHTML = `
@@ -83,12 +84,32 @@ background-color: #f0f0f0;
             });
         });
 
+        
         this.items.forEach(item => {
             item.addEventListener('click', () => {
                 this.searchInput.value = item.textContent;
                 this.selectBox.style.display = 'none';
+                this._value = item.textContent;
+                // this.dispatchEvent(new Event('change')); 
+                // Tạo và dispatch một custom event
+                // event.detail={ value: this._value };
+                const event = new CustomEvent('change', {
+                    detail: { value: this._value },
+                    bubbles: true,
+                    composed: true
+                });
+                this.dispatchEvent(event);
             });
+
+            // this.dispatchEvent(event);
         });
+
+
+    }
+
+    // Thêm getter để lấy giá trị hiện tại
+    get value() {
+        return this._value;
     }
 }
 
