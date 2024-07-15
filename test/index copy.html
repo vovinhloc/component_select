@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 20rem;
+            border: 1px solid;
+        }
+
+        .container {}
+
+        .container_search {
+            flex: 1;
+            border: 1px solid;
+        }
+
+        .container_selected {
+            flex: 1;
+            width: 100%;
+            border: 1px solid;
+        }
+
+        .container_search input {
+            width: 100%;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .selected_item_container {
+            background: aliceblue;
+            display: flex;
+            align-content: space-between;
+            padding: .2rem;
+        }
+
+        .container_selected {
+            display: flex;
+            gap: .5rem;
+        }
+
+        
+.selected_item_container {
+  background: aliceblue;
+  position: relative;
+  padding: .5rem;
+  padding-right: 1rem;
+}
+.selected_closed {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  /*! background: white; */
+  padding: 0.2rem;
+  text-align: center;
+}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="container_search"><input /></div>
+        <div class="container_selected">
+            <div class="selected_item_container"><div>Apple</div> <div class="selected_closed">x</div></div>
+            <div class="selected_item_container"><div>Apple</div> <div class="selected_closed">x</div></div>
+            <div class="selected_item_container"><div>Apple</div> <div class="selected_closed">x</div></div>
+        </div>
+    </div>
+
+</body>
+
+</html>

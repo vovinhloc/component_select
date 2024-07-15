@@ -10,46 +10,77 @@ class CustomSelect extends HTMLElement {
         this.shadowRoot.innerHTML = `
     <style>
 
-.custom-select-container {
-position: relative;
+body {
+    font-family: Arial, sans-serif;
+}
 
+.custom-select-container {
+    position: relative;
+    width: 300px;
+    margin: 50px auto;
+}
+
+.selected-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.selected-item {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.selected-item .remove-item {
+    margin-left: 5px;
+    cursor: pointer;
 }
 
 #searchInput {
-width: 100%;
-padding: 10px;
-box-sizing: border-box;
-border: 1px solid #ccc;
-border-radius: 4px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .select-box {
-position: absolute;
-top: 100%;
-left: 0;
-right: 0;
-border: 1px solid #ccc;
-border-top: none;
-border-radius: 0 0 4px 4px;
-max-height: 200px;
-overflow-y: auto;
-display: none;
-background-color: #fff;
-z-index: 1000;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+    background-color: #fff;
+    z-index: 1000;
 }
 
 .select-box-item {
-padding: 10px;
-cursor: pointer;
+    padding: 10px;
+    cursor: pointer;
 }
 
 .select-box-item:hover {
-background-color: #f0f0f0;
+    background-color: #f0f0f0;
 }
+
 
     </style>
     <div class="custom-select-container">
-        <input type="text" id="searchInput" placeholder="Search...">
+        <div  class="select-container">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <div id="selectedItems"></div>
+        </div>
+        
         <div id="selectBox" class="select-box">
             
         </div>
@@ -60,6 +91,8 @@ background-color: #f0f0f0;
         this.searchInput = this.shadowRoot.getElementById('searchInput');
         this.selectBox = this.shadowRoot.getElementById('selectBox');
         this.items = this.shadowRoot.querySelectorAll('.select-box-item');
+        this.selectedItemsContainer = this.shadowRoot.getElementById('selectedItems');
+        
 
         // Xử lý sự kiện
         this.addEvents();
@@ -68,9 +101,9 @@ background-color: #f0f0f0;
     connectedCallback() {
 
         this.fetchOptions();
-        this.selectedItemsContainer = document.createElement('div');
-        this.selectedItemsContainer.classList.add('selected-items-container');
-        this.shadowRoot.querySelector('.custom-select-container').appendChild(this.selectedItemsContainer);
+        // this.selectedItemsContainer = document.createElement('div');
+        // this.selectedItemsContainer.classList.add('selected-items-container');
+        // this.shadowRoot.querySelector('.custom-select-container').appendChild(this.selectedItemsContainer);
     }
 
     async fetchOptions(query = "") {
@@ -134,6 +167,21 @@ background-color: #f0f0f0;
                 if (checkbox.checked) {
                     this._value.push(value);
                     this.addSelectedItem(value); // Thêm vào container
+
+                    const selectedItem = document.createElement('div');
+                    selectedItem.classList.add('selected-item');
+                    selectedItem.textContent = item.textContent;
+
+                    const removeIcon = document.createElement('span');
+                    removeIcon.classList.add('remove-item');
+                    removeIcon.textContent = 'x';
+                    removeIcon.addEventListener('click', function () {
+                        selectedItemsContainer.removeChild(selectedItem);
+                    });
+                    selectedItem.appendChild(removeIcon);
+                    selectedItemsContainer.appendChild(selectedItem);
+
+                    searchInput.value = '';
                 } else {
                     this._value = this._value.filter(v => v.id !== id);
                     this.removeSelectedItem(id); // Xóa khỏi container

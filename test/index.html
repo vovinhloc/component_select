@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .select-container {
+            border: 2px solid gray;
+        }
+
+        .select-box-item.selected {
+            background-color: yellow;
+        }
+
+        .selected-item span {
+            margin-left: .5rem;
+            display: inline-block;
+            color: red;
+            background: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="custom-select-container">
+        <div class="select-container">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <div id="selected-items-container"></div>
+        </div>
+
+        <div id="selectBox" class="select-box">
+            <div class="select-box-item">Option 1</div>
+            <div class="select-box-item">Option 2</div>
+            <div class="select-box-item">Option 3</div>
+            <div class="select-box-item">Option 4</div>
+
+        </div>
+    </div>
+    <script>
+        function encodeHTML(str) {
+            const temp = document.createElement('div');
+            (temp.textContent != null) ? (temp.textContent = str) : (temp.innerText = str);
+            return temp.innerHTML;
+        }
+        var _value = [];
+        var searchInput = document.getElementById('searchInput');
+        var selectedItemsContainer = document.getElementById('selected-items-container');
+
+        var selectBox = document.getElementById('selectBox');
+        var items = document.querySelectorAll('.select-box-item');
+
+        searchInput.addEventListener('focus', () => selectBox.style.display = 'block');
+        searchInput.addEventListener('blur', () => { 
+            console.log("blur");
+            setTimeout(() => {
+            
+            selectBox.style.display = 'none'}, 200)});
+
+        searchInput.addEventListener('input', this.handleInput); // Sử dụng handleInput với debounce
+        function handleInput() {
+            console.log("handleInput");
+        }
+        this.items.forEach(item => {
+            console.log(item.textContent)
+            item.addEventListener("click", (e) => {
+                console.log("click", e, item.textContent);
+                // if (!item.classList.contains('disabled')) {
+                if (!_value.includes(item.textContent)) {
+                    // addItem(item.textContent);
+                    item.classList.add('selected');
+
+                    let item_div = document.createElement("div");
+                    item_div.classList.add("selected-item");
+                    item_div.id = "selected_" + encodeHTML(item.textContent);
+                    item_div.textContent = item.textContent;
+
+                    const removeIcon = document.createElement('span');
+                    removeIcon.classList.add('remove-item');
+                    removeIcon.textContent = 'x';
+                    removeIcon.addEventListener('click', function () {
+                        selectedItemsContainer.removeChild(item_div);
+                        _value = _value.filter((n) => n !== item.textContent);
+                        item.classList.remove('selected');
+                        // enableItem(text);
+                    });
+
+                    item_div.appendChild(removeIcon);
+                    /////////////////////////////////////////////
+
+                    // item_div.innerHTML = item.textContent;
+                    selectedItemsContainer.appendChild(item_div);
+                    _value.push(item.textContent);
+                } else {
+                    item.classList.remove('selected');
+                    let id = "selected_" + encodeHTML(item.textContent);
+                    let item_div = document.getElementById(id);
+                    _value = _value.filter((n) => n !== item.textContent);
+                    // _.remove(_value, n => n === item.textContent);
+                    selectedItemsContainer.removeChild(item_div);
+
+                }
+
+            })
+        });
+    </script>
+
+</body>
+
+</html>
