@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .select-container {
+            border: 2px solid gray;
+        }
+
+        .select-box-item.selected {
+            background-color: yellow;
+        }
+
+        .selected-item span {
+            margin-left: .5rem;
+            display: inline-block;
+            color: red;
+            background: white;
+            cursor: pointer;
+        }
+
+        .selectBox-container {
+            display: flex !important;
+            gap: 1rem;
+        }
+
+        #searchInput {
+            width: 100%;
+        }
+
+        .selectBox-container {
+            background-color: #dcdcdc3d;
+            padding: .5rem;
+        }
+
+        .option-container {
+            background-color: white;
+            padding: 1rem;
+            flex: 1;
+        }
+
+        #selected-items-container {
+            background-color: white;
+            padding: .5rem;
+            flex: 1;
+        }
+
+        .title {
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="custom-select-container" tabindex="0">
+        <div class="select-container">
+            <input type="text" id="searchInput" placeholder="Search...">
+
+        </div>
+        <div id="selectBox" style="display: none;" class="select-box">
+            <div class="selectBox-container">
+                <div class="option-container">
+                    <div class="title">Mời chọn :</div>
+                    <div class="select-box-item">Option 1</div>
+                    <div class="select-box-item">Option 2</div>
+                    <div class="select-box-item">Option 3</div>
+                    <div class="select-box-item">Option 4</div>
+                </div>
+                <div id="selected-items-container">
+                    <div class="title">DS đã chọn :</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const encodeHTML = (str) => {
+            const temp = document.createElement('div');
+            temp.textContent = str;
+            return temp.innerHTML;
+        };
+
+        const _value = [];
+        const customSelectContainer = document.querySelector('.custom-select-container');
+        const searchInput = document.getElementById('searchInput');
+        const selectedItemsContainer = document.getElementById('selected-items-container');
+        const selectBox = document.getElementById('selectBox');
+        const items = document.querySelectorAll('.select-box-item');
+
+        const handleInput = debounce(() => {
+            console.log("handleInput");
+        }, 300);
+
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        function toggleSelectBox(display) {
+            selectBox.style.display = display;
+        }
+
+        function handleFocusOut() {
+            setTimeout(() => {
+                if (!document.activeElement.closest('.custom-select-container')) {
+                    toggleSelectBox('none');
+                }
+            }, 200);
+        }
+
+        function handleItemClick(e, item) {
+            if (!_value.includes(item.textContent)) {
+                item.classList.add('selected');
+
+                const itemDiv = document.createElement("div");
+                itemDiv.classList.add("selected-item");
+                itemDiv.id = "selected_" + encodeHTML(item.textContent);
+                itemDiv.textContent = item.textContent;
+
+                const removeIcon = document.createElement('span');
+                removeIcon.classList.add('remove-item');
+                removeIcon.textContent = 'x';
+                removeIcon.addEventListener('click', () => {
+                    selectedItemsContainer.removeChild(itemDiv);
+                    _value.splice(_value.indexOf(item.textContent), 1);
+                    item.classList.remove('selected');
+                });
+
+                itemDiv.appendChild(removeIcon);
+                selectedItemsContainer.appendChild(itemDiv);
+                _value.push(item.textContent);
+            } else {
+                item.classList.remove('selected');
+                const itemDiv = document.getElementById("selected_" + encodeHTML(item.textContent));
+                selectedItemsContainer.removeChild(itemDiv);
+                _value.splice(_value.indexOf(item.textContent), 1);
+            }
+        }
+
+        searchInput.addEventListener('focus', () => toggleSelectBox('block'));
+        customSelectContainer.addEventListener('focusout', handleFocusOut);
+        searchInput.addEventListener('input', handleInput);
+
+        items.forEach(item => {
+            item.addEventListener("click", (e) => handleItemClick(e, item));
+        });
+    </script>
+</body>
+
+</html>
